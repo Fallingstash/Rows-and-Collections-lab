@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
 using System.IO;
 
 class Program {
@@ -8,7 +8,7 @@ class Program {
     Console.WriteLine("Добро пожаловать в исправитель файлов!!!");
     Console.WriteLine("-------------------------------------------------");
 
-    FileSearher searcher = new FileSearher();
+    FileSearcher searcher = new FileSearcher();
     TextEditor fixer;
     Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
 
@@ -21,53 +21,59 @@ class Program {
       Console.Write("Ваш выбор:");
       string userChoice = Console.ReadLine();
 
-      switch(userChoice) {
+      switch (userChoice) {
         case "1":
-          List<string> wrongWords = new List<string>();
-          bool writingWrongWords = true;
-          Console.WriteLine("Введите ПРАВИЛЬНУЮ версию слова, например\"привет\" ");
-          string correctWord = Console.ReadLine();
-
-          while (writingWrongWords) {
-            Console.WriteLine("Введите поочередно слова для исправления, например \"привте\".\nДля того чтобы выйти из заполнения отправьте пустую строку.");
-            string userInput = Console.ReadLine();
-            if (userInput == "") {
-              writingWrongWords = false;
-              dict[correctWord] = wrongWords;
-
-            } else {
-              wrongWords.Add(userInput);
-            }
-          }
+          FillDictionary(dict);
           break;
-
         case "2":
-          Console.WriteLine("Введите путь к директории");
-          string dirPath = Console.ReadLine();
-          List<string> foundFiles = searcher.SearchFiles(dirPath);
-          foreach (string file in foundFiles) {
-            Console.WriteLine($"Текст файла {file}\n");
-            Console.WriteLine(File.ReadAllText(file) + "\n");
-
-            fixer = new TextEditor(file);
-            fixer.FixFile(dict);
-
-            Console.WriteLine("Новый текст файла: \n");
-            Console.WriteLine(File.ReadAllText(file) + "\n");
-          }
+          FixFilesInDirectory(searcher, dict);
           break;
-
-          case "3":
-            appIsOpen = false;
-            break;
-    
+        case "3":
+          appIsOpen = false;
+          break;
         default:
           Console.WriteLine("Неверный выбор. Попробуйте снова.");
           break;
       }
+
       Console.WriteLine("Нажмите любую клавишу для продолжения..");
       Console.ReadKey();
       Console.Clear();
+    }
+  }
+
+  static void FillDictionary(Dictionary<string, List<string>> dict) {
+    List<string> wrongWords = new List<string>();
+    bool writingWrongWords = true;
+    Console.WriteLine("Введите ПРАВИЛЬНУЮ версию слова, например \"привет\" ");
+    string correctWord = Console.ReadLine();
+
+    while (writingWrongWords) {
+      Console.WriteLine("Введите поочередно слова для исправления, например \"привте\".\nДля того чтобы выйти из заполнения отправьте пустую строку.");
+      string userInput = Console.ReadLine();
+      if (userInput == "") {
+        writingWrongWords = false;
+        dict[correctWord] = wrongWords;
+      } else {
+        wrongWords.Add(userInput);
+      }
+    }
+  }
+
+  static void FixFilesInDirectory(FileSearher searcher, Dictionary<string, List<string>> dict) {
+    Console.WriteLine("Введите путь к директории");
+    string dirPath = Console.ReadLine();
+    List<string> foundFiles = searcher.SearchFiles(dirPath);
+
+    foreach (string file in foundFiles) {
+      Console.WriteLine($"Текст файла {file}\n");
+      Console.WriteLine(File.ReadAllText(file) + "\n");
+
+      var fixer = new TextEditor(file);
+      fixer.FixFile(dict);
+
+      Console.WriteLine("Новый текст файла: \n");
+      Console.WriteLine(File.ReadAllText(file) + "\n");
     }
   }
 }

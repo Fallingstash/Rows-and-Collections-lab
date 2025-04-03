@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 class FileSearher {
   public List<string> files = new List<string>();
   public string directoryPath;

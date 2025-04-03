@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 class MistakesFixer : TextFile {
-
   public Dictionary<string, List<string>> mistakesDictionary = new Dictionary<string, List<string>>();
 
   public MistakesFixer() { }
